@@ -5,11 +5,12 @@ from selenium.common.exceptions import WebDriverException
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from unittest import skip
 
 
 MAX_WAIT = 10
 
-class NewVisitorTest(StaticLiveServerTestCase):
+class FunctionalTest(StaticLiveServerTestCase):
     """Тест нового посетителя"""
 
     def setUp(self):
@@ -37,7 +38,10 @@ class NewVisitorTest(StaticLiveServerTestCase):
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)
-    
+
+class LayoutAndStylingTest(FunctionalTest):
+    '''тест макета и стилевого оформления'''
+
     def test_layout_and_styling(self):
         '''тест макета и стилевого оформления'''
         # Эдит открывает домашнюю страницу
@@ -51,6 +55,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
             512,
             delta=10
         )
+
+class NewVisitorTest(FunctionalTest):
+    """тест новоого посетителя"""
 
     def test_can_start_a_list_and_retrieve_it_later(self):
 
@@ -144,7 +151,27 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # Довольные они ложаться спать
 
+class ItemValidationTest(FunctionalTest):
+    '''тест валидации элемента списка'''
 
+    @skip
+    def test_cannot_add_empty_list_items(self):
+        '''тест: нельзя добавлять пустые элементы списка'''
+        # Соня открывает домашнюю страницу и случайно пытается отправить
+        # пустой элемент списка. Она нажимает Enter на пустом поле ввода
+
+        # Домашняя страница обновляется, и появляется сообщение об ошибке,
+        # которое говорит, что элементы списка не должны быть пустыми
+
+        # Она пробует снова, теперь с неким текстом для элемента, и теперь
+        # это срабатывает
+
+        # Как ни странно, Соня решает отправить второй пустой элемент списка
+
+        # Она получает аналогичное предупреждение на странице списка
+
+        # И она может его исправить, заполнив поле неким текстом
+        self.fail('напиши меня!')
         
 if __name__ == '__main__': ...
 

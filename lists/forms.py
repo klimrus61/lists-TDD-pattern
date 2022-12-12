@@ -4,7 +4,7 @@ from .models import Item
 
 
 EMPTY_ITEM_ERROR = "You can't have an empty list item"
-DUPLICATE_ITEM_ERROR = "You've already got this in your lsit"
+DUPLICATE_ITEM_ERROR = "You've already got this in your list"
 
 
 class ItemForm(forms.models.ModelForm):
@@ -41,3 +41,6 @@ class ExistingListItemForm(ItemForm):
         except ValidationError as e:
             e.error_dict = {'text': [DUPLICATE_ITEM_ERROR]}
             self._update_errors(e)
+    
+    def save(self):
+        return forms.models.ModelForm.save(self)

@@ -2,7 +2,10 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils.html import escape
 from lists.models import Item, List
-from lists.forms import ItemForm, EMPTY_ITEM_ERROR
+from lists.forms import (
+    DUPLICATE_ITEM_ERROR, EMPTY_ITEM_ERROR,
+    ExistingListItemForm, ItemForm,
+)
 from unittest import skip
 
 
@@ -42,17 +45,11 @@ class ListViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'list.html')
 
-    def test_for_invalid_input_passes_form_to_template(self):
-        '''тест на недопустимый ввод: передается форма в шаблон'''
-        response = self.post_invalid_input()
-        self.assertIsInstance(response.context["form"], ItemForm)
-
     def test_for_invalid_input_shows_error_on_page(self):
         '''тест на недопустимый ввод: ошибки выводятся на страницу'''
         response = self.post_invalid_input()
         self.assertContains(response, escape(EMPTY_ITEM_ERROR))
 
-    @skip
     def test_duplicate_item_validation_errors_end_up_list_page(self):
         '''тест: ошибки валидации повторяющегося элемента
             оканчиваюся на странице списков'''
@@ -63,7 +60,7 @@ class ListViewTest(TestCase):
             data={"text": "foo"}
         )
 
-        expected_error = escape("You've already got this in your list")
+        expected_error = escape(DUPLICATE_ITEM_ERROR)
 
         self.assertContains(response, expected_error)
         self.assertTemplateUsed(response, "list.html")
@@ -126,14 +123,17 @@ class ListViewTest(TestCase):
 
         self.assertRedirects(response, f'/lists/{corrent_list.id}/')
 
+    def test_for_invalid_input_passes_form_to_template(self):
+        '''тест на недопустимый ввод: передается форма в шаблон'''
+        response = self.post_invalid_input()
+        self.assertIsInstance(response.context["form"], ExistingListItemForm)
+        
     def test_displays_item_form(self):
         '''тест отображения формы для элемента'''
         list_ = List.objects.create()
         response = self.client.get(f'/lists/{list_.id}/')
-        self.assertIsInstance(response.context["form"], ItemForm)
+        self.assertIsInstance(response.context["form"], ExistingListItemForm)
         self.assertContains(response, 'name="text"')
-
-
 
 
 class NewListTest(TestCase):

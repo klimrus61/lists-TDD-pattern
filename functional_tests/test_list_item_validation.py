@@ -55,9 +55,7 @@ class ItemValidationTest(FunctionalTest):
         '''тест: нельзя добавить повторяющиеся элементы'''
         # Соня открывает домашнюю страницу и начинает новый список
         self.browser.get(self.live_server_url)
-        self.get_item_input_box().send_keys('Buy wellies')
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Buy wellies')
+        self.add_list_item('Buy wellies')
 
         # Она случайно пытается ввести повторяющийся элемент
         self.get_item_input_box().send_keys('Buy wellies')
@@ -74,9 +72,7 @@ class ItemValidationTest(FunctionalTest):
         # Соня начинает список и вызывает ошибку валидации
 
         self.browser.get(self.live_server_url)
-        self.get_item_input_box().send_keys('Banter too thick')
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Banter too thick')
+        self.add_list_item('Banter too thick')
         self.get_item_input_box().send_keys('Banter too thick')
         self.get_item_input_box().send_keys(Keys.ENTER)
 

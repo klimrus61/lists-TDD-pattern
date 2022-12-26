@@ -69,7 +69,7 @@ class LoginTest(FunctionalTest):
             return django_mail.body
         
 
-        mail_pass = os.environ['YANDEX_PASSWORD']
+        mail_pass = os.environ['EMAIL_PASSWORD']
         imap_server = 'imap.yandex.ru'
         imap = imaplib.IMAP4_SSL(imap_server)
         start = time.time()

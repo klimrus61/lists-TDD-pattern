@@ -2,6 +2,7 @@ from django.conf import settings
 from .server_tools import create_session_on_server
 from .management.commands.create_session import create_pre_authenticated_session
 from .base import FunctionalTest
+from selenium.common.exceptions import NoSuchElementException
 
 
 class MyListsTest(FunctionalTest):
@@ -65,9 +66,14 @@ class MyListsTest(FunctionalTest):
 
         # Она выходит из системы. Опция "Мои списки" изчезает
         self.browser.find_element_by_link_text("Log out").click()
-        self.wait_for(
-            lambda: self.assertEqual(
-                self.browser.find_element_by_link_text('My lists'),
-                []
+        try:
+            self.wait_for(
+                lambda: self.assertEqual(
+                    self.browser.find_element_by_link_text('My lists').text,
+                    'My lists'
+                )
             )
-        )
+        except NoSuchElementException as e:
+            self.assertFalse(False, False)
+        else:
+            raise Exception('Найден раздел My lists у незарегестрированного user')
